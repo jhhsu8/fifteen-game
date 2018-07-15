@@ -145,7 +145,6 @@ void greet(void) {
  * (i.e., fills 2D array with values but does not actually print them).  
  */
 void init(void) {
- 
     int count = d * d - 1;
     for (int i = 0; i < d; i++) {
         for (int j = 0; j < d; j++) {
@@ -169,7 +168,6 @@ void draw(void) {
         for (int j = 0; j < d; j++) {
             //Add an space in front of the value if it is one-digit 
             if (board[i][j] < 10 && board[i][j] > 0) {
-
                 printf("%2d", board[i][j]);
             }
 
@@ -241,8 +239,7 @@ bool won(void) {
 
     // Prints the board as an array in its current state. 
     for (int row = 0; row < d; row++) {
-        for (int col = 0; col < d; col++)
-        {
+        for (int col = 0; col < d; col++) {
             element = board[row][col];
             array[count] = element;
             count++;
