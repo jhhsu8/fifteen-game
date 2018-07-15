@@ -14,10 +14,10 @@
  * Note that usleep is obsolete, but it offers more granularity than
  * sleep and is simpler to use than nanosleep; `man usleep` for more.
  */
- 
+
 #define _XOPEN_SOURCE 500
 
-#include <cs50.h>
+#include <cs50.h> 
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -40,28 +40,24 @@ void draw(void);
 bool move(int tile);
 bool won(void);
 
-int main(int argc, string argv[])
-{
+int main(int argc, string argv[]) {
     // ensure proper usage
-    if (argc != 2)
-    {
+    if (argc != 2) {
         printf("Usage: fifteen d\n");
         return 1;
     }
 
     // ensure valid dimensions
     d = atoi(argv[1]);
-    if (d < DIM_MIN || d > DIM_MAX)
-    {
+    if (d < DIM_MIN || d > DIM_MAX) {
         printf("Board must be between %i x %i and %i x %i, inclusive.\n",
             DIM_MIN, DIM_MIN, DIM_MAX, DIM_MAX);
         return 2;
     }
 
     // open log
-    FILE* file = fopen("log.txt", "w");
-    if (file == NULL)
-    {
+    FILE * file = fopen("log.txt", "w");
+    if (file == NULL) {
         return 3;
     }
 
@@ -72,8 +68,7 @@ int main(int argc, string argv[])
     init();
 
     // accept moves until game is won
-    while (true)
-    {
+    while (true) {
         // clear the screen
         clear();
 
@@ -81,13 +76,10 @@ int main(int argc, string argv[])
         draw();
 
         // log the current state of the board (for testing)
-        for (int i = 0; i < d; i++)
-        {
-            for (int j = 0; j < d; j++)
-            {
+        for (int i = 0; i < d; i++) {
+            for (int j = 0; j < d; j++) {
                 fprintf(file, "%i", board[i][j]);
-                if (j < d - 1)
-                {
+                if (j < d - 1) {
                     fprintf(file, "|");
                 }
             }
@@ -96,8 +88,7 @@ int main(int argc, string argv[])
         fflush(file);
 
         // check for win
-        if (won())
-        {
+        if (won()) {
             printf("ftw!\n");
             break;
         }
@@ -105,10 +96,9 @@ int main(int argc, string argv[])
         // prompt for move
         printf("Tile to move: ");
         int tile = GetInt();
-        
+
         // quit if user inputs 0 (for testing)
-        if (tile == 0)
-        {
+        if (tile == 0) {
             break;
         }
 
@@ -117,8 +107,7 @@ int main(int argc, string argv[])
         fflush(file);
 
         // move if possible, else report illegality
-        if (!move(tile))
-        {
+        if (!move(tile)) {
             printf("\nIllegal move.\n");
             usleep(500000);
         }
@@ -126,7 +115,7 @@ int main(int argc, string argv[])
         // sleep thread for animation's sake
         usleep(500000);
     }
-    
+
     // close log
     fclose(file);
 
@@ -137,8 +126,7 @@ int main(int argc, string argv[])
 /**
  * Clears screen using ANSI escape sequences.
  */
-void clear(void)
-{
+void clear(void) {
     printf("\033[2J");
     printf("\033[%d;%dH", 0, 0);
 }
@@ -146,8 +134,7 @@ void clear(void)
 /**
  * Greets player.
  */
-void greet(void)
-{
+void greet(void) {
     clear();
     printf("WELCOME TO GAME OF FIFTEEN\n");
     usleep(2000000);
@@ -157,191 +144,117 @@ void greet(void)
  * Initializes the game's board with tiles numbered 1 through d*d - 1
  * (i.e., fills 2D array with values but does not actually print them).  
  */
-void init(void){
-
-int count = d * d - 1;
-
-for (int i = 0; i < d; i++)
-{
-    for (int j = 0; j < d; j++)
-    {
-         board[i][j] = count;
-         count--;
-         
-}
+void init(void) {
+ 
+    int count = d * d - 1;
+    for (int i = 0; i < d; i++) {
+        for (int j = 0; j < d; j++) {
+            board[i][j] = count;
+            count--;
+        }
     }
-    
+
     //Swap the tile 1 and tile 2 if d is an odd number 
-    if ((d * d) % 2 != 0){
-     
-         board[d - 1][d - 3] = 1;
-         board[d - 1][d - 2] = 2;
+    if ((d * d) % 2 != 0) {
+        board[d - 1][d - 3] = 1;
+        board[d - 1][d - 2] = 2;
     }
-
 }
 
 /**
  * Prints the board in its current state.
  */
-void draw(void)
-{
-   
-   for (int i = 0; i < d; i++)
-   {
-    for (int j = 0; j < d; j++)
+void draw(void) {
+    for (int i = 0; i < d; i++) {
+        for (int j = 0; j < d; j++) {
+            //Add an space in front of the value if it is one-digit 
+            if (board[i][j] < 10 && board[i][j] > 0) {
 
-    {
-        //Add an space in front of the value if it is one-digit 
-        
-        if (board[i][j] < 10 && board[i][j] > 0){
-          
-          printf("%2d", board[i][j]); 
-            
+                printf("%2d", board[i][j]);
+            }
+
+            //Print the empty space _ instead of value 0 
+            else if (board[i][j] == 0) {
+                printf(" _");
+            }
+
+            //Print the rest of the values 
+            else {
+                printf("%d", board[i][j]);
+            }
         }
-        
-        //Print the empty space _ instead of value 0 
-          
-          else if(board[i][j]==0)
-          
-          {
-          
-              printf(" _");
-          }
-          
-           //Print the rest of the values 
-          
-         else {
-             
-             printf("%d", board[i][j]);
-             
-         }
-     
+        printf("\n");
     }
-    printf("\n"); 
-   }
 }
 
 /**
  * If tile borders empty space, moves tile and returns true, else
  * returns false. 
  */
-bool move(int tile){
+bool move(int tile) {
+    for (int row = 0; row < d; row++) {
+        for (int col = 0; col < d; col++) {
+            // If tile borders empty space, moves tile
+            if (board[row][col] == 0) {
+                // Set boundary at row 0 and swap the tile and empty space  
+                if (row > 0 && board[row - 1][col] == tile) {
+                    board[row][col] = board[row - 1][col];
+                    board[row - 1][col] = 0;
+                    return true;
+                }
 
-   
-    for (int row = 0; row < d; row++)
-    {
-        for (int col = 0; col < d; col++)
-        {
-            
-            // If tile borders empty space, moves tile 
-            
-        if (board[row][col] == 0){
-            
-            // Set boundary at row 0 and swap the tile and empty space  
-            
-            if (row > 0 && board[row - 1][col] == tile)
-            
-            {
-                board[row][col] = board[row - 1][col];
-                
-                board[row - 1][col] = 0;
-                
-                return true;
-                
+                // Set boundary at row d and swap the tile and empty space 
+                if (row < d - 1 && board[row + 1][col] == tile) {
+                    board[row][col] = board[row + 1][col];
+                    board[row + 1][col] = 0;
+                    return true;
+                }
+
+                // Set boundary at column 0 and swap the tile and empty space
+                if (col > 0 && board[row][col - 1] == tile) {
+                    board[row][col] = board[row][col - 1];
+                    board[row][col - 1] = 0;
+                    return true;
+                }
+
+                // Set boundary at column d and swap the tile and empty space
+                if (col < d - 1 && board[row][col + 1] == tile) {
+                    board[row][col] = board[row][col + 1];
+                    board[row][col + 1] = 0;
+                    return true;
+                }
             }
-            
-            // Set boundary at row d and swap the tile and empty space 
-            
-            if (row < d - 1 && board[row + 1][col] == tile)
-            
-            {
-                
-                board[row][col] = board[row + 1][col];
-                
-                board[row + 1][col]= 0;
-                
-                return true;
-                
-            }
-            
-            // Set boundary at column 0 and swap the tile and empty space
-            
-            if (col > 0 && board[row][col - 1] == tile)
-            
-            {
-                
-                board[row][col] = board[row][col - 1];
-                
-                board[row][col-1] = 0;
-                
-                return true;
-                
-            }
-            
-             // Set boundary at column d and swap the tile and empty space
-            
-            if (col < d - 1 && board[row][col + 1] == tile)
-            
-            {
-                board[row][col] = board[row][col + 1];
-                
-                board[row][col + 1] = 0;
-                
-                return true;
-                
-            }
-            
         }
-            
-        }
-        
     }
-    
     return false;
-    
 }
-         
 
 /**
  * Returns true if game is won (i.e., board is in winning configuration), 
  * else false.
  */
- 
-bool won(void)
 
-{
-    
-    int array[d * d];    
+bool won(void) {
+    int array[d * d];
     int element;
     int count = 0;
-    
+
     // Prints the board as an array in its current state. 
-    for (int row = 0; row < d; row++)
-    {
+    for (int row = 0; row < d; row++) {
         for (int col = 0; col < d; col++)
-        
         {
-            element = board[row][col]; 
+            element = board[row][col];
             array[count] = element;
             count++;
-            printf("%i",element);
-}
+            printf("%i", element);
+        }
     }
-    
-   // Check if the array values are in an ascending order.  
-    
-    for (int x = 0; x < d * d - 1; x++)
-    {
-        if (array[x + 1] < array[x])
-        {
-        
+
+    // Check if the array values are in an ascending order.  
+    for (int x = 0; x < d * d - 1; x++) {
+        if (array[x + 1] < array[x]) {
             return false;
         }
     }
-    
     return true;
 }
-
- 
- 
-
